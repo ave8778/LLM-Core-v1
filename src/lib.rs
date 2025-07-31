@@ -7,10 +7,16 @@ pub struct CommandParser;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pest::Parser;      // ← точка с запятой и порядок
+    use pest::Parser;
+
     #[test]
     fn parses_ok() {
         assert!(CommandParser::parse(Rule::command, "MOVE UI ONE FAST[]").is_ok());
+    }
+
+    #[test]
+    fn rejects_bad() {
+        assert!(CommandParser::parse(Rule::command, "MOVEUI ONE").is_err());
     }
 }
 
