@@ -1,0 +1,6 @@
+command	bpe_token
+MOVEUIONEFAST	<move_ui_one_fast>
+FETCHDATATOPSAFE	<fetch_data_top_safe>
+SENDMEDIAALLFAST	<send_media_all_fast>
+ANALYZEROBOTONERECURSE	<analyze_robot_one_recurse>
+# ... полный словарь будет сгенерирован в ходе этапа 3

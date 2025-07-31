@@ -1,0 +1,11 @@
+# Lint rules for LLM‑Core commands
+# Each rule defines a pattern to flag and an optional recommendation
+rules:
+  - id: duplicate_action
+    description: "Repeated actions should be consolidated into one command"
+    pattern: /(MOVE.+){2,}/
+    recommendation: "Combine repeated MOVE segments"
+  - id: forbidden_words
+    description: "Disallow undefined modifiers"
+    pattern: /(SLOW|UNSAFE)/
+    recommendation: "Use valid modifiers: FAST, SAFE, RECURSE"

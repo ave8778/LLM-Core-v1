@@ -1,0 +1,8 @@
+[package]
+name = "llmcore_v1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pest = "2.8.1"
+pest_derive = "2.8.1"

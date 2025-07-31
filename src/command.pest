@@ -1,0 +1,7 @@
+command  = { act ~ obj ~ qty ~ mod ~ params? }
+act      = _{ "MOVE" | "FETCH" | "SEND" | "ANALYZE" | "CREATE" | "UPDATE" | "DELETE" }
+obj      = _{ "UI" | "DATA" | "MEDIA" | "ROBOT" }
+qty      = _{ "ONE" | "ALL" | "TOP" | "RANGE" | "COUNT" | "SLICE" }
+mod      = _{ "FAST" | "SAFE" | "RECURSE" | "DRYRUN" | "VERBOSE" }
+params   =  { "[" ~ (!"]" ~ ANY)* ~ "]" }
+WHITESPACE = _{ " " | "\t" | "\n" }
