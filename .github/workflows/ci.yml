@@ -1,5 +1,6 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -8,3 +9,12 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with: { toolchain: stable, override: true }
       - run: cargo test --all
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install tiktoken
+      - run: |
+          python scripts/lexicon_metrics.py | tee kpi.txt
+          eff=$(tail -1 kpi.txt | awk '{print $3}')
+          if (( $(echo "$eff > 1.5" | bc -l) )); then
+            echo "❌ Token Efficiency KPI failed: $eff"; exit 1
+          fi
