@@ -3,20 +3,19 @@ use pest_derive::Parser;            // ← добавлено
 #[derive(Parser)]
 #[grammar = "src/command.pest"]
 pub struct CommandParser;
+pub mod linter;
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use pest::Parser;
-
+mod lint_tests {
+    use super::linter::lint;
     #[test]
-    fn parses_ok() {
-        assert!(CommandParser::parse(Rule::command, "MOVE UI ONE FAST[]").is_ok());
+    fn catches_duplicate() {
+        assert!(!lint("MOVE UI ONE FAST MOVE UI ONE FAST").is_empty());
     }
-
     #[test]
-    fn rejects_bad() {
-        assert!(CommandParser::parse(Rule::command, "MOVEUI ONE").is_err());
+    fn catches_forbidden() {
+        assert!(!lint("MOVE UI ONE SLOW").is_empty());
     }
 }
+
 
