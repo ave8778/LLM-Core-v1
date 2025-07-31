@@ -1,22 +1,29 @@
 use regex::Regex;
+use once_cell::sync::Lazy;
+use serde::Deserialize;
+use std::{fs, path::Path};
+
+#[derive(Deserialize)]
+struct YRule { id: String, pattern: String, recommendation: String }
 
 #[derive(Debug)]
-pub enum RuleId { DuplicateAction, ForbiddenWords }
+pub struct LintIssue { pub id: String, pub msg: String }
 
-#[derive(Debug)]
-pub struct LintIssue { pub rule: RuleId, pub msg: String }
+static RULES: Lazy<Vec<YRule>> = Lazy::new(|| {
+    let text = fs::read_to_string(Path::new("lint_rules.yaml"))
+        .expect("lint_rules.yaml missing");
+    serde_yaml::from_str::<Vec<YRule>>(&text)
+        .expect("Invalid YAML in lint_rules.yaml")
+});
 
 pub fn lint(src: &str) -> Vec<LintIssue> {
-    let mut issues = Vec::new();
-    let dup = Regex::new(r"(MOVE.+){2,}").unwrap();
-    if dup.is_match(src) {
-        issues.push(LintIssue { rule: RuleId::DuplicateAction,
-            msg: "Combine repeated MOVE segments".into() });
-    }
-    let forb = Regex::new(r"(SLOW|UNSAFE)").unwrap();
-    if forb.is_match(src) {
-        issues.push(LintIssue { rule: RuleId::ForbiddenWords,
-            msg: "Use valid modifiers: FAST, SAFE, RECURSE".into() });
-    }
-    issues
+    RULES.iter()
+        .filter_map(|r| {
+            let re = Regex::new(&r.pattern).ok()?;
+            re.is_match(src).then(|| LintIssue {
+                id: r.id.clone(),
+                msg: r.recommendation.clone(),
+            })
+        })
+        .collect()
 }
